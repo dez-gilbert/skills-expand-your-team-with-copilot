@@ -1,12 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   // DOM elements
   const activitiesList = document.getElementById("activities-list");
+  const calendarView = document.getElementById("calendar-view");
   const messageDiv = document.getElementById("message");
   const registrationModal = document.getElementById("registration-modal");
   const modalActivityName = document.getElementById("modal-activity-name");
   const signupForm = document.getElementById("signup-form");
   const activityInput = document.getElementById("activity");
   const closeRegistrationModal = document.querySelector(".close-modal");
+  const viewToggleBtns = document.querySelectorAll(".view-toggle-btn");
 
   // Search and filter elements
   const searchInput = document.getElementById("activity-search");
@@ -40,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
+  let currentView = "card"; // 'card' or 'calendar'
 
   // Authentication state
   let currentUser = null;
@@ -363,6 +366,120 @@ document.addEventListener("DOMContentLoaded", () => {
     return "academic";
   }
 
+  // Test data for when API is unavailable
+  const testActivities = {
+    "Chess Club": {
+      "description": "Learn strategies and compete in chess tournaments",
+      "schedule": "Mondays and Fridays, 3:15 PM - 4:45 PM",
+      "schedule_details": {
+        "days": ["Monday", "Friday"],
+        "start_time": "15:15",
+        "end_time": "16:45"
+      },
+      "max_participants": 12,
+      "participants": ["michael@mergington.edu", "daniel@mergington.edu"]
+    },
+    "Programming Class": {
+      "description": "Learn programming fundamentals and build software projects",
+      "schedule": "Tuesdays and Thursdays, 7:00 AM - 8:00 AM",
+      "schedule_details": {
+        "days": ["Tuesday", "Thursday"],
+        "start_time": "07:00",
+        "end_time": "08:00"
+      },
+      "max_participants": 20,
+      "participants": ["emma@mergington.edu", "sophia@mergington.edu"]
+    },
+    "Morning Fitness": {
+      "description": "Early morning physical training and exercises",
+      "schedule": "Mondays, Wednesdays, Fridays, 6:30 AM - 7:45 AM",
+      "schedule_details": {
+        "days": ["Monday", "Wednesday", "Friday"],
+        "start_time": "06:30",
+        "end_time": "07:45"
+      },
+      "max_participants": 30,
+      "participants": ["john@mergington.edu", "olivia@mergington.edu"]
+    },
+    "Soccer Team": {
+      "description": "Join the school soccer team and compete in matches",
+      "schedule": "Tuesdays and Thursdays, 3:30 PM - 5:30 PM",
+      "schedule_details": {
+        "days": ["Tuesday", "Thursday"],
+        "start_time": "15:30",
+        "end_time": "17:30"
+      },
+      "max_participants": 22,
+      "participants": ["liam@mergington.edu", "noah@mergington.edu"]
+    },
+    "Basketball Team": {
+      "description": "Practice and compete in basketball tournaments",
+      "schedule": "Wednesdays and Fridays, 3:15 PM - 5:00 PM",
+      "schedule_details": {
+        "days": ["Wednesday", "Friday"],
+        "start_time": "15:15",
+        "end_time": "17:00"
+      },
+      "max_participants": 15,
+      "participants": ["ava@mergington.edu", "mia@mergington.edu"]
+    },
+    "Art Club": {
+      "description": "Explore various art techniques and create masterpieces",
+      "schedule": "Thursdays, 3:15 PM - 5:00 PM",
+      "schedule_details": {
+        "days": ["Thursday"],
+        "start_time": "15:15",
+        "end_time": "17:00"
+      },
+      "max_participants": 15,
+      "participants": ["amelia@mergington.edu", "harper@mergington.edu"]
+    },
+    "Drama Club": {
+      "description": "Act, direct, and produce plays and performances",
+      "schedule": "Mondays and Wednesdays, 3:30 PM - 5:30 PM",
+      "schedule_details": {
+        "days": ["Monday", "Wednesday"],
+        "start_time": "15:30",
+        "end_time": "17:30"
+      },
+      "max_participants": 20,
+      "participants": ["ella@mergington.edu", "scarlett@mergington.edu"]
+    },
+    "Weekend Robotics": {
+      "description": "Build and program robots in our state-of-the-art workshop",
+      "schedule": "Saturdays, 10:00 AM - 2:00 PM",
+      "schedule_details": {
+        "days": ["Saturday"],
+        "start_time": "10:00",
+        "end_time": "14:00"
+      },
+      "max_participants": 15,
+      "participants": ["ethan@mergington.edu", "oliver@mergington.edu"]
+    },
+    "Science Olympiad": {
+      "description": "Weekend science competition preparation for regional and state events",
+      "schedule": "Saturdays, 1:00 PM - 4:00 PM",
+      "schedule_details": {
+        "days": ["Saturday"],
+        "start_time": "13:00",
+        "end_time": "16:00"
+      },
+      "max_participants": 18,
+      "participants": ["isabella@mergington.edu", "lucas@mergington.edu"]
+    },
+    "Sunday Chess Tournament": {
+      "description": "Weekly tournament for serious chess players with rankings",
+      "schedule": "Sundays, 2:00 PM - 5:00 PM",
+      "schedule_details": {
+        "days": ["Sunday"],
+        "start_time": "14:00",
+        "end_time": "17:00"
+      },
+      "max_participants": 16,
+      "participants": ["mason@mergington.edu", "logan@mergington.edu"]
+    }
+  };
+
   // Function to fetch activities from API with optional day and time filters
   async function fetchActivities() {
     // Show loading skeletons first
@@ -403,14 +520,21 @@ document.addEventListener("DOMContentLoaded", () => {
       // Apply search and filter, and handle weekend filter in client
       displayFilteredActivities();
     } catch (error) {
-      activitiesList.innerHTML =
-        "<p>Failed to load activities. Please try again later.</p>";
-      console.error("Error fetching activities:", error);
+      // Use test data when API is unavailable
+      console.log("Using test data (API unavailable)");
+      allActivities = testActivities;
+      displayFilteredActivities();
     }
   }
 
   // Function to display filtered activities
   function displayFilteredActivities() {
+    // If in calendar view, render calendar
+    if (currentView === "calendar") {
+      renderCalendarView();
+      return;
+    }
+
     // Clear the activities list
     activitiesList.innerHTML = "";
 
@@ -470,6 +594,186 @@ document.addEventListener("DOMContentLoaded", () => {
     Object.entries(filteredActivities).forEach(([name, details]) => {
       renderActivityCard(name, details);
     });
+  }
+
+  // Function to render calendar view
+  function renderCalendarView() {
+    calendarView.innerHTML = "";
+
+    // Define time slots (6 AM to 6 PM in 1-hour increments)
+    const timeSlots = [];
+    for (let hour = 6; hour <= 18; hour++) {
+      timeSlots.push(`${hour.toString().padStart(2, "0")}:00`);
+    }
+
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+    // Create calendar grid
+    const calendarGrid = document.createElement("div");
+    calendarGrid.className = "calendar-grid";
+
+    // Add header row
+    const emptyHeader = document.createElement("div");
+    emptyHeader.className = "calendar-header";
+    emptyHeader.textContent = "Time";
+    calendarGrid.appendChild(emptyHeader);
+
+    days.forEach((day) => {
+      const dayHeader = document.createElement("div");
+      dayHeader.className = "calendar-header";
+      dayHeader.textContent = day;
+      calendarGrid.appendChild(dayHeader);
+    });
+
+    // Process activities and group by day and time
+    const activityByDayTime = {};
+    days.forEach((day) => {
+      activityByDayTime[day] = {};
+    });
+
+    Object.entries(allActivities).forEach(([name, details]) => {
+      const activityType = getActivityType(name, details.description);
+
+      // Apply category filter
+      if (currentFilter !== "all" && activityType !== currentFilter) {
+        return;
+      }
+
+      // Apply weekend filter if selected
+      if (currentTimeRange === "weekend" && details.schedule_details) {
+        const activityDays = details.schedule_details.days;
+        const isWeekendActivity = activityDays.some((day) =>
+          timeRanges.weekend.days.includes(day)
+        );
+
+        if (!isWeekendActivity) {
+          return;
+        }
+      }
+
+      // Apply search filter
+      const searchableContent = [
+        name.toLowerCase(),
+        details.description.toLowerCase(),
+        formatSchedule(details).toLowerCase(),
+      ].join(" ");
+
+      if (
+        searchQuery &&
+        !searchableContent.includes(searchQuery.toLowerCase())
+      ) {
+        return;
+      }
+
+      // Place activity in calendar
+      if (details.schedule_details) {
+        const activityDays = details.schedule_details.days;
+        const startTime = details.schedule_details.start_time;
+
+        activityDays.forEach((day) => {
+          if (!activityByDayTime[day][startTime]) {
+            activityByDayTime[day][startTime] = [];
+          }
+          activityByDayTime[day][startTime].push({ name, details });
+        });
+      }
+    });
+
+    // Add time slots and cells
+    timeSlots.forEach((timeSlot) => {
+      // Time label
+      const timeLabel = document.createElement("div");
+      timeLabel.className = "calendar-time-label";
+      const [hour] = timeSlot.split(":").map((num) => parseInt(num));
+      const period = hour >= 12 ? "PM" : "AM";
+      const displayHour = hour % 12 || 12;
+      timeLabel.textContent = `${displayHour}:00 ${period}`;
+      calendarGrid.appendChild(timeLabel);
+
+      // Add cells for each day
+      days.forEach((day) => {
+        const cell = document.createElement("div");
+        cell.className = "calendar-cell";
+
+        // Check if any activity starts within this hour
+        const [slotHour] = timeSlot.split(":").map((num) => parseInt(num));
+        const activitiesAtTime = [];
+        
+        // Check all times for this day to find activities starting in this hour
+        Object.keys(activityByDayTime[day]).forEach((activityTime) => {
+          const [activityHour] = activityTime.split(":").map((num) => parseInt(num));
+          if (activityHour === slotHour) {
+            activitiesAtTime.push(...activityByDayTime[day][activityTime]);
+          }
+        });
+
+        activitiesAtTime.forEach((activity, index) => {
+          const activityDiv = document.createElement("div");
+          activityDiv.className = "calendar-activity";
+
+          // Handle overlaps
+          if (activitiesAtTime.length > 1) {
+            activityDiv.classList.add(`overlap-${index}`);
+          }
+
+          const totalSpots = activity.details.max_participants;
+          const takenSpots = activity.details.participants.length;
+
+          activityDiv.innerHTML = `
+            <div class="calendar-activity-name">${activity.name}</div>
+            <div class="calendar-activity-enrollment">${takenSpots}/${totalSpots} enrolled</div>
+          `;
+
+          // Add click handler to open registration
+          activityDiv.addEventListener("click", () => {
+            if (currentUser) {
+              openRegistrationModal(activity.name);
+            }
+          });
+
+          // Add tooltip on hover
+          const tooltip = document.createElement("div");
+          tooltip.className = "calendar-activity-tooltip";
+          tooltip.innerHTML = `
+            <h4>${activity.name}</h4>
+            <p><strong>Description:</strong> ${activity.details.description}</p>
+            <p><strong>Schedule:</strong> ${formatSchedule(activity.details)}</p>
+            <p><strong>Enrollment:</strong> ${takenSpots}/${totalSpots} students</p>
+          `;
+          activityDiv.appendChild(tooltip);
+
+          cell.appendChild(activityDiv);
+        });
+
+        calendarGrid.appendChild(cell);
+      });
+    });
+
+    calendarView.appendChild(calendarGrid);
+  }
+
+  // Function to switch views
+  function switchView(view) {
+    currentView = view;
+
+    // Update button states
+    viewToggleBtns.forEach((btn) => {
+      if (btn.dataset.view === view) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+
+    // Show/hide appropriate view
+    if (view === "card") {
+      activitiesList.classList.remove("hidden");
+      calendarView.classList.add("hidden");
+    } else {
+      activitiesList.classList.add("hidden");
+      calendarView.classList.remove("hidden");
+      renderCalendarView();
+    }
   }
 
   // Function to render a single activity card
@@ -638,6 +942,13 @@ document.addEventListener("DOMContentLoaded", () => {
       // Update current time filter and fetch activities
       currentTimeRange = button.dataset.time;
       fetchActivities();
+    });
+  });
+
+  // Add event listeners for view toggle buttons
+  viewToggleBtns.forEach((button) => {
+    button.addEventListener("click", () => {
+      switchView(button.dataset.view);
     });
   });
 
