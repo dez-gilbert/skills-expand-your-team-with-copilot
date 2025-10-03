@@ -1,0 +1,103 @@
+name: Modify Existing Activity
+description: Request changes to an existing extracurricular activity or club
+title: "[Modify Activity]: "
+labels: ["enhancement", "activity"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for keeping our activities up to date! Please provide the information about what needs to be changed.
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Activity Name
+      description: Which activity needs to be modified?
+      placeholder: "e.g., Chess Club, Drama Club, Soccer Team"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: changes-needed
+    attributes:
+      label: What needs to be changed?
+      description: Select all that apply
+      options:
+        - label: Schedule (days or times)
+        - label: Description
+        - label: Maximum participants
+        - label: Activity name
+        - label: Other (describe below)
+
+  - type: textarea
+    id: schedule-changes
+    attributes:
+      label: Schedule Changes
+      description: If the schedule needs to change, provide the new days and times
+      placeholder: |
+        Current: Mondays and Wednesdays, 3:30 PM - 5:00 PM
+        New: Tuesdays and Thursdays, 4:00 PM - 5:30 PM
+    validations:
+      required: false
+
+  - type: textarea
+    id: description-changes
+    attributes:
+      label: Description Changes
+      description: If the description needs to change, provide the new description
+      placeholder: "Provide the new description here..."
+    validations:
+      required: false
+
+  - type: input
+    id: max-participants-change
+    attributes:
+      label: Maximum Participants Change
+      description: If the capacity needs to change, provide the new maximum number
+      placeholder: "e.g., 25"
+    validations:
+      required: false
+
+  - type: input
+    id: new-activity-name
+    attributes:
+      label: New Activity Name
+      description: If the activity name needs to change, provide the new name
+      placeholder: "e.g., Advanced Chess Club"
+    validations:
+      required: false
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason for Changes
+      description: Why are these changes needed?
+      placeholder: "e.g., Room availability changed, increased student interest, schedule conflict with another activity"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information that would be helpful
+      placeholder: "Add any additional context here..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: The following items should be completed for this task
+      options:
+        - label: Update the activity in the database with the new information
+          required: false
+        - label: Verify the changes appear correctly on the website
+          required: false
+        - label: Ensure existing student registrations are maintained (if applicable)
+          required: false
+        - label: Test that filters still work correctly with the updated activity
+          required: false

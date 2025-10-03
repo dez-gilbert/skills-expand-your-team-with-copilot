@@ -1,0 +1,104 @@
+name: Bug Report
+description: Report a problem with the High School Activities system
+title: "[Bug]: "
+labels: ["bug"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please provide as much detail as possible to help us fix the issue.
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug Description
+      description: What is the problem you're experiencing?
+      placeholder: "e.g., Students cannot sign up for Chess Club"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this bug?
+      placeholder: |
+        1. Go to the activities page
+        2. Click on 'Chess Club'
+        3. Try to sign up a student
+        4. See error message
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What should happen instead?
+      placeholder: "e.g., Student should be successfully added to the Chess Club participants list"
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: What actually happens?
+      placeholder: "e.g., Error message appears saying 'Activity not found'"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Which part of the system is affected?
+      description: Select the component where you're experiencing the issue
+      options:
+        - Activities listing
+        - Student signup/registration
+        - Activity filters (day/time)
+        - Teacher login
+        - Student unregistration
+        - Activity details display
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Bug Severity
+      description: How severe is this issue?
+      options:
+        - Critical - System is unusable
+        - High - Major feature is broken
+        - Medium - Feature works but has issues
+        - Low - Minor cosmetic issue
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information that might help (screenshots, error messages, etc.)
+      placeholder: "Add any additional context here..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: The following items should be completed to resolve this bug
+      options:
+        - label: Identify the root cause of the bug
+          required: false
+        - label: Fix the issue in the code
+          required: false
+        - label: Test that the fix works as expected
+          required: false
+        - label: Verify no other features are broken by the fix
+          required: false

@@ -1,0 +1,97 @@
+name: Feature Request
+description: Suggest a new feature or enhancement for the High School Activities system
+title: "[Feature]: "
+labels: ["enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Please provide details about what you'd like to see added.
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature Description
+      description: What feature would you like to see added?
+      placeholder: "e.g., Add ability to export student participation reports"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-statement
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve? Why is it needed?
+      placeholder: "e.g., Currently, we have no way to track which students are participating in multiple activities, making it hard to ensure balanced participation"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: How do you envision this feature working?
+      placeholder: "e.g., Add a 'Reports' page where teachers can select a date range and export a CSV file with student participation data"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: user-type
+    attributes:
+      label: Who would benefit from this feature?
+      description: Select all that apply
+      multiple: true
+      options:
+        - Teachers
+        - Students
+        - Administrators
+        - Parents
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Feature Priority
+      description: How important is this feature?
+      options:
+        - High - Needed for daily operations
+        - Medium - Would improve efficiency
+        - Low - Nice to have
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: Have you considered any alternative approaches?
+      placeholder: "e.g., We could manually track participation in a spreadsheet, but it's time-consuming"
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information, mockups, or examples that would help
+      placeholder: "Add any additional context here..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What should be true when this feature is complete?
+      options:
+        - label: Feature is implemented according to the proposed solution
+          required: false
+        - label: Feature is tested and working correctly
+          required: false
+        - label: Feature is accessible to the appropriate user types
+          required: false
+        - label: Documentation is updated to explain the new feature
+          required: false
