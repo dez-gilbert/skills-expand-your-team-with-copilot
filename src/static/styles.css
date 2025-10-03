@@ -1,10 +1,10 @@
 /* Color palette */
 :root {
-  /* Primary colors */
-  --primary: #1a237e;
-  --primary-light: #534bae;
-  --primary-dark: #000051;
-  --primary-text: #ffffff;
+  /* Primary colors - School colors: lime green and white */
+  --primary: #32cd32;
+  --primary-light: #7fff00;
+  --primary-dark: #228b22;
+  --primary-text: #000000;
 
   /* Secondary colors */
   --secondary: #ff6f00;
@@ -13,8 +13,8 @@
   --secondary-text: #ffffff;
 
   /* Neutral colors */
-  --background: #f5f5f5;
-  --surface: #ffffff;
+  --background: #ffffff;
+  --surface: #f9fff9;
   --text-primary: #333333;
   --text-secondary: #666666;
   --border: #e0e0e0;
@@ -48,6 +48,66 @@ body {
   padding: 12px;
   background-color: var(--background);
   font-size: 0.9rem;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Animated Git-style branch lines background */
+.git-branches-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.branch-line {
+  animation: flowBranch 30s ease-in-out infinite;
+}
+
+.branch-line.branch-1 {
+  animation-delay: 0s;
+}
+
+.branch-line.branch-2 {
+  animation-delay: -7.5s;
+}
+
+.branch-line.branch-3 {
+  animation-delay: -15s;
+}
+
+.branch-line.branch-4 {
+  animation-delay: -22.5s;
+}
+
+@keyframes flowBranch {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateX(-100px);
+    opacity: 0.6;
+  }
+}
+
+.branch-line circle {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    r: 5;
+    opacity: 0.6;
+  }
+  50% {
+    r: 7;
+    opacity: 0.9;
+  }
 }
 
 header {
@@ -71,6 +131,30 @@ header h1 {
 
 header h2 {
   font-size: 1.2rem;
+}
+
+/* Mascot styling */
+.mascots-container {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.mascot-image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 3px solid var(--primary-dark);
+  background-color: white;
+  padding: 5px;
+  transition: transform 0.3s ease;
+}
+
+.mascot-image:hover {
+  transform: scale(1.1) rotate(5deg);
 }
 
 main {
