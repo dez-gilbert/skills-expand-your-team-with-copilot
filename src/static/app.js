@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
+  let groupByCategory = false;
 
   // Authentication state
   let currentUser = null;
@@ -466,14 +467,64 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Display filtered activities
+    // Display filtered activities - grouped or ungrouped
+    if (groupByCategory) {
+      displayActivitiesGrouped(filteredActivities);
+    } else {
+      Object.entries(filteredActivities).forEach(([name, details]) => {
+        renderActivityCard(name, details);
+      });
+    }
+  }
+
+  // Function to display activities grouped by category
+  function displayActivitiesGrouped(filteredActivities) {
+    // Group activities by category
+    const grouped = {};
+    
     Object.entries(filteredActivities).forEach(([name, details]) => {
-      renderActivityCard(name, details);
+      const activityType = getActivityType(name, details.description);
+      if (!grouped[activityType]) {
+        grouped[activityType] = [];
+      }
+      grouped[activityType].push({ name, details });
+    });
+
+    // Define category order
+    const categoryOrder = ["sports", "arts", "academic", "community", "technology"];
+    
+    // Render each category group
+    categoryOrder.forEach((category) => {
+      if (grouped[category] && grouped[category].length > 0) {
+        const typeInfo = activityTypes[category];
+        
+        // Create group header
+        const groupHeader = document.createElement("div");
+        groupHeader.className = "category-group-header";
+        groupHeader.style.backgroundColor = typeInfo.color;
+        groupHeader.style.color = typeInfo.textColor;
+        groupHeader.innerHTML = `
+          <h3>${typeInfo.label}</h3>
+          <span class="group-count">${grouped[category].length} ${grouped[category].length === 1 ? 'activity' : 'activities'}</span>
+        `;
+        activitiesList.appendChild(groupHeader);
+        
+        // Create group container
+        const groupContainer = document.createElement("div");
+        groupContainer.className = "category-group";
+        activitiesList.appendChild(groupContainer);
+        
+        // Render activities in this group
+        grouped[category].forEach(({ name, details }) => {
+          const activityCard = createActivityCardElement(name, details);
+          groupContainer.appendChild(activityCard);
+        });
+      }
     });
   }
 
-  // Function to render a single activity card
-  function renderActivityCard(name, details) {
+  // Helper function to create activity card element (extracted from renderActivityCard)
+  function createActivityCardElement(name, details) {
     const activityCard = document.createElement("div");
     activityCard.className = "activity-card";
 
@@ -587,6 +638,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    return activityCard;
+  }
+
+  // Function to render a single activity card
+  function renderActivityCard(name, details) {
+    const activityCard = createActivityCardElement(name, details);
     activitiesList.appendChild(activityCard);
   }
 
@@ -639,6 +696,13 @@ document.addEventListener("DOMContentLoaded", () => {
       currentTimeRange = button.dataset.time;
       fetchActivities();
     });
+  });
+
+  // Add event listener for group by toggle
+  const groupByCheckbox = document.getElementById("group-by-category");
+  groupByCheckbox.addEventListener("change", (event) => {
+    groupByCategory = event.target.checked;
+    displayFilteredActivities();
   });
 
   // Open registration modal
